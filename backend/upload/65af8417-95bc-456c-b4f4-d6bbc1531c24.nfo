@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<episodedetails>
+  <plot>Packed by Bilibili XCoder v2.0.2</plot>
+  <lockdata>false</lockdata>
+  <dateadded>2025-03-12 15:01:11</dateadded>
+  <title>《水浒传》03 大闹五台山</title>
+  <runtime>43</runtime>
+  <art>
+    <poster>/media/tv/水浒传（1998）/03 大闹五台山-thumb.jpg</poster>
+  </art>
+  <showtitle>水浒传</showtitle>
+  <season>1</season>
+  <fileinfo>
+    <streamdetails>
+      <video>
+        <codec>h264</codec>
+        <micodec>h264</micodec>
+        <bitrate>8829234</bitrate>
+        <width>2696</width>
+        <height>2160</height>
+        <aspect>4:3</aspect>
+        <aspectratio>4:3</aspectratio>
+        <framerate>25</framerate>
+        <language>und</language>
+        <scantype>progressive</scantype>
+        <default>True</default>
+        <forced>False</forced>
+        <duration>42</duration>
+        <durationinseconds>2577</durationinseconds>
+      </video>
+      <audio>
+        <codec>aac</codec>
+        <micodec>aac</micodec>
+        <bitrate>317378</bitrate>
+        <language>und</language>
+        <scantype>progressive</scantype>
+        <channels>2</channels>
+        <samplingrate>48000</samplingrate>
+        <default>True</default>
+        <forced>False</forced>
+      </audio>
+    </streamdetails>
+  </fileinfo>
+</episodedetails>

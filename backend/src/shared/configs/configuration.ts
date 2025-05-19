@@ -27,4 +27,7 @@ export default (): any => ({
     ),
   },
   defaultAdminUserPassword: process.env.DEFAULT_ADMIN_USER_PASSWORD,
+  file: {
+    uploadDir: process.env.FILE_UPLOAD_DIR || './upload',
+  },
 });

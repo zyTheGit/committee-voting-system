@@ -49,7 +49,7 @@ export class UserController {
   @UseInterceptors(ClassSerializerInterceptor)
   @Get('me')
   @ApiOperation({
-    summary: 'Get user me API',
+    summary: '获取当前用户信息',
   })
   @ApiResponse({
     status: HttpStatus.OK,
@@ -65,7 +65,7 @@ export class UserController {
     this.logger.log(ctx, `${this.getMyProfile.name} was called`);
 
     const user = await this.userService.findById(ctx, ctx.user!.id);
-    return { data: user, meta: {} };
+    return { data: user, statusCode: HttpStatus.OK, message: 'success' };
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -96,7 +96,12 @@ export class UserController {
       query.offset,
     );
 
-    return { data: records, meta: { count } };
+    return {
+      data: records,
+      meta: { count },
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
   }
 
   // TODO: ADD RoleGuard
@@ -121,7 +126,8 @@ export class UserController {
     this.logger.log(ctx, `${this.getUser.name} was called`);
 
     const user = await this.userService.getUserById(ctx, id);
-    return { data: user, meta: {} };
+
+    return { data: user, statusCode: HttpStatus.OK, message: 'success' };
   }
 
   // TODO: ADD RoleGuard
@@ -147,6 +153,6 @@ export class UserController {
     this.logger.log(ctx, `${this.updateUser.name} was called`);
 
     const user = await this.userService.updateUser(ctx, userId, input);
-    return { data: user, meta: {} };
+    return { data: user, statusCode: HttpStatus.OK, message: 'success' };
   }
 }

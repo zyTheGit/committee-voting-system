@@ -3,6 +3,7 @@
 import axios from "axios";
 // 引入json-bigint
 import JSONBIG from "json-bigint";
+import { requestAuthUrl, authApi } from "@/api";
 import {
   getRefreshToken,
   getToken,
@@ -41,7 +42,7 @@ instance.interceptors.response.use(
   async (error) => {
     const { config, response } = error;
     // 白名单请求跳过获取token
-    const whitelist = ["/auth/login", "/auth/refresh-token"];
+    const whitelist = [requestAuthUrl.login, requestAuthUrl.refreshToken];
     const withoutToken = whitelist.includes(config.url);
     if (withoutToken) {
       return Promise.reject(response.data);
@@ -50,15 +51,13 @@ instance.interceptors.response.use(
       response &&
       response.status === 401 &&
       !config._retry &&
-      !config.url.includes("/auth/refresh-token")
+      !config.url.includes(requestAuthUrl.refreshToken)
     ) {
       if (!isRefreshing) {
         isRefreshing = true;
         const refreshToken = getRefreshToken();
         try {
-          const res = await axios.post("/auth/refresh-token", {
-            refreshToken,
-          });
+          const res = await authApi.refreshToken({ refreshToken });
           const { accessToken, refreshToken: newRefreshToken } = res.data.data;
           setToken(accessToken);
           setRefreshToken(newRefreshToken);

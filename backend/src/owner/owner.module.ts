@@ -7,9 +7,10 @@ import { OwnerController } from './controllers/owner.controller';
 import { Owner } from './entities/owner.entity';
 import { OwnerService } from './services/owner.service';
 import { OwnerAclService } from './services/owner-acl.service';
+import { FileModule } from '../file/file.module';
 
 @Module({
-  imports: [SharedModule, TypeOrmModule.forFeature([Owner])],
+  imports: [SharedModule, TypeOrmModule.forFeature([Owner]), FileModule],
   providers: [OwnerService, JwtAuthStrategy, OwnerAclService],
   controllers: [OwnerController],
   exports: [OwnerService],

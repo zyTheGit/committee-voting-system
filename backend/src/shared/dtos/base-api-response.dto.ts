@@ -5,7 +5,14 @@ export class BaseApiResponse<T> {
   public data: T; // Swagger Decorator is added in the extended class below, since that will override this one.
 
   @ApiProperty({ type: Object })
-  public meta: any;
+  public meta?: any;
+
+  @ApiProperty({ type: Number })
+  public statusCode: number;
+
+  @ApiProperty({ type: String })
+  public message: string;
+  
 }
 
 type ApiPropertyType =

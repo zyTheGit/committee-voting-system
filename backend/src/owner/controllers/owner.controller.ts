@@ -10,6 +10,7 @@ import {
   Param,
   Patch,
   Delete,
+  HttpStatus,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -24,6 +25,13 @@ import { OwnerService } from '../services/owner.service';
 import { Owner } from '../entities/owner.entity';
 import { OwnerInput } from '../dtos/owner-update-input.dto';
 import { OwnerOutput } from '../dtos/owner-output.dto';
+import { PaginationParamsDto } from '../../shared/dtos/pagination-params.dto';
+import {
+  PaginationUtil,
+  PaginatedResponse,
+} from '../../shared/utils/pagination.util';
+import { BaseApiResponse } from 'src/shared/dtos/base-api-response.dto';
+import { plainToClass } from 'class-transformer';
 
 @ApiTags('业主')
 @Controller('owners')
@@ -93,13 +101,20 @@ export class OwnerController {
       name?: string;
       phone?: string;
       idNumber?: string;
-      page?: number;
-      limit?: number;
-    },
-  ) {
-    const { records, count } = await this.ownerService.getOwners(query);
+    } & PaginationParamsDto,
+  ): Promise<PaginatedResponse<Owner>> {
+    // 处理分页参数
+    const { limit, offset } = PaginationUtil.getPaginationParams(query);
 
-    return { data: records, meta: { count } };
+    // 查询数据
+    const { records, count } = await this.ownerService.getOwners({
+      ...query,
+      limit,
+      offset,
+    });
+
+    // 返回统一的分页响应格式
+    return PaginationUtil.createPaginatedResponse(records, count, query);
   }
 
   @ApiOperation({
@@ -120,12 +135,30 @@ export class OwnerController {
   })
   @Get('export')
   async export(@Res() res: Response) {
-    const buffer = await this.ownerService.exportToExcel();
+    const { buffer, fileInfo } = await this.ownerService.exportToExcel();
     res.setHeader(
       'Content-Type',
       'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
     );
-    res.setHeader('Content-Disposition', 'attachment; filename=owners.xlsx');
+    res.setHeader(
+      'Content-Disposition',
+      `attachment; filename=${fileInfo.filename}`,
+    );
     res.send(buffer);
+  }
+
+  @ApiOperation({ summary: '获取全部业主列表（不分页）' })
+  @ApiResponse({ status: 200, description: '获取成功', type: [OwnerOutput] })
+  @Get('list')
+  async getAllOwners(): Promise<BaseApiResponse<Owner[]>> {
+    const { records } = await this.ownerService.getOwners({});
+    const ownersOutput = plainToClass(Owner, records, {
+      excludeExtraneousValues: true,
+    });
+    return {
+      data: ownersOutput,
+      statusCode: HttpStatus.OK,
+      message: 'success',
+    };
   }
 }

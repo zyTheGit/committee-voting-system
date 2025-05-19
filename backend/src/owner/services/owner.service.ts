@@ -7,20 +7,27 @@ import { OwnerExcelDto } from '../dtos/owner-excel.dto';
 import { plainToClass } from 'class-transformer';
 import { OwnerOutput } from '../dtos/owner-output.dto';
 import { OwnerInput } from '../dtos/owner-update-input.dto';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { RequestContext } from 'src/shared/request-context/request-context.dto';
+import { FileService } from 'src/file/services/file.service';
+import { FileOutput } from 'src/file/dtos/file-output.dto';
 
 @Injectable()
 export class OwnerService {
   constructor(
     @InjectRepository(Owner)
     private ownerRepository: Repository<Owner>,
+    private fileService: FileService,
   ) {}
 
-  @UseInterceptors(FileInterceptor('file'))
-  async importFromExcel(
-    @UploadedFile() file: Express.Multer.File,
-  ): Promise<Owner[]> {
+  async importFromExcel(file: Express.Multer.File): Promise<Owner[]> {
+    // 保存上传的Excel文件并获取文件信息
+    const fileInfo = await this.fileService.uploadFile(
+      file,
+      '业主信息导入Excel文件',
+      undefined,
+      'owner-excel'
+    );
+    
+    // 使用文件的buffer或从路径读取
     const fileBuffer = file instanceof Buffer ? file : file.buffer;
     const workbook = new ExcelJS.Workbook();
     await workbook.xlsx.load(fileBuffer);
@@ -104,15 +111,15 @@ export class OwnerService {
     await this.ownerRepository.delete(id);
   }
 
-  async exportToExcel(): Promise<Buffer> {
+  async exportToExcel(): Promise<{ buffer: Buffer; fileInfo: FileOutput }> {
     const owners = await this.ownerRepository.find();
     const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet('Owners');
+    const worksheet = workbook.addWorksheet('业主信息');
 
-    // Add headers
+    // 添加表头
     worksheet.addRow(['姓名', '电话', '房号', '身份证号', '备注']);
 
-    // Add data
+    // 添加数据
     owners.forEach((owner) => {
       worksheet.addRow([
         owner.name,
@@ -123,6 +130,32 @@ export class OwnerService {
       ]);
     });
 
-    return (await workbook.xlsx.writeBuffer()) as Buffer;
+    // 生成Excel文件的buffer
+    const buffer = await workbook.xlsx.writeBuffer() as Buffer;
+    
+    // 创建临时文件路径和名称
+    const filename = `业主信息导出_${new Date().getTime()}.xlsx`;
+    const tempFilePath = `${this.fileService.getUploadDir()}/${filename}`;
+    
+    // 将buffer写入临时文件
+    const fs = require('fs');
+    fs.writeFileSync(tempFilePath, buffer);
+    
+    // 创建文件记录
+    const fileInfo = await this.fileService.uploadFile(
+      {
+        filename,
+        originalname: filename,
+        mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        size: buffer.length,
+        path: tempFilePath,
+        buffer
+      } as Express.Multer.File,
+      '业主信息导出Excel文件',
+      undefined,
+      'owner-excel'
+    );
+    
+    return { buffer, fileInfo };
   }
 }

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { request } from "@/utils";
+import { authApi } from "@/api";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -31,8 +31,7 @@ export const useUserStore = defineStore("user", {
     async login(credentials) {
       try {
         // 这里将来需要替换为实际的API调用
-        const response = await userApi.login(credentials);
-        debugger;
+        const response = await authApi.login(credentials);
         const { accessToken, refreshToken, user } = response.data;
 
         // 保存到状态和本地存储
@@ -49,7 +48,7 @@ export const useUserStore = defineStore("user", {
     async logout() {
       try {
         // 这里将来需要调用实际的登出API
-        await userApi.logout();
+        await authApi.logout();
 
         // 清除状态和本地存储
         this.removeInfo();
