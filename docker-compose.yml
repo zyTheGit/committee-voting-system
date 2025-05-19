@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:14
+    container_name: committee-voting-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: committee_voting
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: committee-voting-backend
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_USER: postgres
+      DATABASE_PASSWORD: postgres
+      DATABASE_NAME: committee_voting
+      NODE_ENV: development
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+
+  admin:
+    build:
+      context: ./frontend/admin
+      dockerfile: Dockerfile
+    container_name: committee-voting-admin
+    ports:
+      - "8080:80"
+    volumes:
+      - ./frontend/admin:/app
+      - /app/node_modules
+
+  client:
+    build:
+      context: ./frontend/client
+      dockerfile: Dockerfile
+    container_name: committee-voting-client
+    ports:
+      - "8081:80"
+    volumes:
+      - ./frontend/client:/app
+      - /app/node_modules
+
+volumes:
+  postgres_data:
