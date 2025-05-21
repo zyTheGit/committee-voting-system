@@ -16,16 +16,16 @@ const routes: Array<RouteRecordRaw> = [
     },
     children: [
       {
-        path: 'basic-list',
-        name: 'basic-list',
+        path: 'owner-basic-list',
+        name: 'owner-basic-list',
         meta: {
           title: '业主管理',
         },
         component: () => import('@/views/owner/basicList/index.vue'),
       },
       {
-        path: 'basic-info/:id?',
-        name: 'basic-info',
+        path: 'owner-basic-info/:id?',
+        name: 'owner-basic-info',
         meta: {
           title: '基础详情',
           hidden: true,
