@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { Vote } from '../entities/vote.entity';
 import { Candidate } from '../../candidate/entities/candidate.entity';
 import { VotingRule } from '../../voting-rule/entities/voting-rule.entity';
-import { Owner } from '../../owner/entities/owner.entity';
 
 @Injectable()
 export class VoteService {

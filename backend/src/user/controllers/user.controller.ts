@@ -65,7 +65,7 @@ export class UserController {
     this.logger.log(ctx, `${this.getMyProfile.name} was called`);
 
     const user = await this.userService.findById(ctx, ctx.user!.id);
-    return { data: user, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: user, code: HttpStatus.OK, message: 'success' };
   }
 
   @UseInterceptors(ClassSerializerInterceptor)
@@ -97,9 +97,9 @@ export class UserController {
     );
 
     return {
-      data: records,
+      result: records,
       meta: { count },
-      statusCode: HttpStatus.OK,
+      code: HttpStatus.OK,
       message: 'success',
     };
   }
@@ -127,7 +127,7 @@ export class UserController {
 
     const user = await this.userService.getUserById(ctx, id);
 
-    return { data: user, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: user, code: HttpStatus.OK, message: 'success' };
   }
 
   // TODO: ADD RoleGuard
@@ -153,6 +153,6 @@ export class UserController {
     this.logger.log(ctx, `${this.updateUser.name} was called`);
 
     const user = await this.userService.updateUser(ctx, userId, input);
-    return { data: user, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: user, code: HttpStatus.OK, message: 'success' };
   }
 }

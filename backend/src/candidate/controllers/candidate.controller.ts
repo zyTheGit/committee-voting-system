@@ -71,7 +71,7 @@ export class CandidateController {
     this.logger.log(ctx, `${this.createCandidate.name} was called`);
 
     const candidate = await this.candidateService.createCandidate(ctx, input, file);
-    return { data: candidate, statusCode: HttpStatus.CREATED, message: 'success' };
+    return { result: candidate, code: HttpStatus.CREATED, message: 'success' };
   }
 
   @Get()
@@ -104,9 +104,9 @@ export class CandidateController {
     );
 
     return {
-      data: records,
+      result: records,
       meta: { count },
-      statusCode: HttpStatus.OK,
+      code: HttpStatus.OK,
       message: 'success',
     };
   }
@@ -133,7 +133,7 @@ export class CandidateController {
     this.logger.log(ctx, `${this.getCandidate.name} was called`);
 
     const candidate = await this.candidateService.getCandidateById(ctx, id);
-    return { data: candidate, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: candidate, code: HttpStatus.OK, message: 'success' };
   }
 
   @Patch(':id/approve')
@@ -159,7 +159,7 @@ export class CandidateController {
     this.logger.log(ctx, `${this.approveCandidate.name} was called`);
 
     const candidate = await this.candidateService.approveCandidate(ctx, id);
-    return { data: candidate, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: candidate, code: HttpStatus.OK, message: 'success' };
   }
 
   @Delete(':id')
@@ -183,6 +183,6 @@ export class CandidateController {
     this.logger.log(ctx, `${this.withdrawCandidate.name} was called`);
 
     const success = await this.candidateService.withdrawCandidate(ctx, id);
-    return { data: success, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: success, code: HttpStatus.OK, message: 'success' };
   }
 }

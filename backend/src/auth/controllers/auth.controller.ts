@@ -60,7 +60,7 @@ export class AuthController {
 
     const authToken = this.authService.login(ctx);
     
-    return { data: authToken, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: authToken, code: HttpStatus.OK, message: 'success' };
   }
 
   @Post('register')
@@ -76,7 +76,7 @@ export class AuthController {
     @Body() input: RegisterInput,
   ): Promise<BaseApiResponse<RegisterOutput>> {
     const registeredUser = await this.authService.register(ctx, input);
-    return { data: registeredUser, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: registeredUser, code: HttpStatus.OK, message: 'success' };
   }
 
   @Post('refresh-token')
@@ -102,7 +102,7 @@ export class AuthController {
     this.logger.log(ctx, `${this.refreshToken.name} was called`,RefreshTokenInput);
     
     const authToken = await this.authService.refreshToken(ctx);
-    return { data: authToken, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: authToken, code: HttpStatus.OK, message: 'success' };
   }
   @Post('logout')
   @ApiOperation({ summary: '退出登录' })
@@ -111,6 +111,6 @@ export class AuthController {
   async logout(@ReqContext() ctx: RequestContext): Promise<BaseApiResponse<null>> {
     this.logger.log(ctx, `${this.logout.name} was called`);
     await this.authService.logout(ctx);
-    return { data: null, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: null, code: HttpStatus.OK, message: 'success' };
   }
 }

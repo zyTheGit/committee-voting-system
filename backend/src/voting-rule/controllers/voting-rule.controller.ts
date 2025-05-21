@@ -66,7 +66,7 @@ export class VotingRuleController {
     this.logger.log(ctx, `${this.createVotingRule.name} was called`);
 
     const votingRule = await this.votingRuleService.createVotingRule(ctx, input);
-    return { data: votingRule, statusCode: HttpStatus.CREATED, message: 'success' };
+    return { result: votingRule, code: HttpStatus.CREATED, message: 'success' };
   }
 
   @Get()
@@ -93,9 +93,9 @@ export class VotingRuleController {
     );
 
     return {
-      data: records,
+      result: records,
       meta: { count },
-      statusCode: HttpStatus.OK,
+      code: HttpStatus.OK,
       message: 'success',
     };
   }
@@ -122,7 +122,7 @@ export class VotingRuleController {
     this.logger.log(ctx, `${this.getVotingRule.name} was called`);
 
     const votingRule = await this.votingRuleService.getVotingRuleById(ctx, id);
-    return { data: votingRule, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: votingRule, code: HttpStatus.OK, message: 'success' };
   }
 
   @Patch(':id')
@@ -153,7 +153,7 @@ export class VotingRuleController {
       id,
       input,
     );
-    return { data: votingRule, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: votingRule, code: HttpStatus.OK, message: 'success' };
   }
 
   @Delete(':id')
@@ -178,6 +178,6 @@ export class VotingRuleController {
     this.logger.log(ctx, `${this.deleteVotingRule.name} was called`);
 
     const success = await this.votingRuleService.deleteVotingRule(ctx, id);
-    return { data: success, statusCode: HttpStatus.OK, message: 'success' };
+    return { result: success, code: HttpStatus.OK, message: 'success' };
   }
 }

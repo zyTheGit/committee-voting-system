@@ -13,7 +13,7 @@ export class VoteController {
   @ApiResponse({ status: 201, description: '投票成功' })
   @UseGuards(JwtAuthGuard)
   async vote(
-    @Request() req,
+    @Request() req:any,
     @Body() body: { candidateId: number; votingRuleId: number },
   ) {
     // 假设 req.user.ownerId 已经通过认证获取到业主ID

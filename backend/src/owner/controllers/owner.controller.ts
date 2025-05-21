@@ -156,8 +156,8 @@ export class OwnerController {
       excludeExtraneousValues: true,
     });
     return {
-      data: ownersOutput,
-      statusCode: HttpStatus.OK,
+      result: ownersOutput,
+      code: HttpStatus.OK,
       message: 'success',
     };
   }
