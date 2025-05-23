@@ -68,7 +68,7 @@ export class AuthController {
     summary: '用户注册',
   })
   @ApiResponse({
-    status: HttpStatus.CREATED,
+    status: HttpStatus.OK,
     type: SwaggerBaseApiResponse(RegisterOutput),
   })
   async registerLocal(

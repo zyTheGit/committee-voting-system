@@ -13,6 +13,7 @@ const routes: Array<RouteRecordRaw> = [
       title: '列表页面',
       icon: renderIcon(TableOutlined),
       sort: 2,
+      hidden: true,
     },
     children: [
       {

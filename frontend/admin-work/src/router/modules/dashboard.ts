@@ -2,6 +2,7 @@ import { RouteRecordRaw } from 'vue-router';
 import { Layout } from '@/router/constant';
 import { DashboardOutlined } from '@vicons/antd';
 import { renderIcon } from '@/utils/index';
+import { hi } from 'date-fns/locale';
 
 const routeName = 'dashboard';
 
@@ -16,6 +17,7 @@ const routes: Array<RouteRecordRaw> = [
       icon: renderIcon(DashboardOutlined),
       permissions: ['dashboard_console', 'dashboard_console', 'dashboard_workplace'],
       sort: 0,
+      hidden: true,
     },
     children: [
       {
@@ -23,8 +25,8 @@ const routes: Array<RouteRecordRaw> = [
         name: `${routeName}_console`,
         meta: {
           title: '主控台',
-          permissions: ['dashboard_console'],
-          affix: true,
+          // permissions: ['dashboard_console'],
+          // affix: true,
         },
         component: () => import('@/views/dashboard/console/console.vue'),
       },

@@ -80,7 +80,6 @@ export const Alova = createAlova({
       }
       // 请根据自身情况修改数据结构
       const { message, code, result } = res;
-
       // 不进行任何处理，直接返回
       // 用于需要直接获取 code、result、 message 这些信息时开启
       if (method.meta?.isTransformResponse === false) {
@@ -94,10 +93,10 @@ export const Alova = createAlova({
 
       const LoginPath = PageEnum.BASE_LOGIN;
       if (ResultEnum.SUCCESS === code) {
-        return result;
+        return res;
       }
       // 需要登录
-      if (code === 912) {
+      if (code === 401) {
         Modal?.warning({
           title: '提示',
           content: '登录身份已失效，请重新登录!',
@@ -110,7 +109,7 @@ export const Alova = createAlova({
           },
         });
       } else {
-        // 可按需处理错误 一般情况下不是 912 错误，不一定需要弹出 message
+        // 可按需处理错误 一般情况下不是 401 错误，不一定需要弹出 message
         Message?.error(message);
         throw new Error(message);
       }

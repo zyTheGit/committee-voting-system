@@ -13,6 +13,7 @@ const routes: Array<RouteRecordRaw> = [
       title: '结果页面',
       icon: renderIcon(CheckCircleOutlined),
       sort: 4,
+      hidden: true,
     },
     children: [
       {

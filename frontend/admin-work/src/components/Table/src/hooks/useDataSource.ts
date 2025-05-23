@@ -73,10 +73,10 @@ export function useDataSource(
         params = (await beforeRequest(params)) || params;
       }
       const res = await request(params);
-      const resultTotal = res[totalField];
-      const currentPage = res[pageField];
-      const total = res[itemCount];
-      const results = res[listField] ? res[listField] : [];
+      const { meta } = res;
+      const resultTotal = meta[totalField];
+      const currentPage = meta[pageField];
+      const total = meta[itemCount];
 
       // 如果数据异常，需获取正确的页码再次执行
       if (resultTotal) {

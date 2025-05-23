@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 
-export class OwnerUpdateInput {
+export class OwnerInput {
   @Expose()
   @ApiProperty()
   @IsNotEmpty()
@@ -28,10 +28,12 @@ export class OwnerUpdateInput {
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
-  @Length(18, 18)
+  @Length(17, 18)
   idNumber: string;
 
   @Expose()
+  @IsString()
+  @Length(0, 100)
   @ApiProperty({ required: false })
   remark?: string;
 }

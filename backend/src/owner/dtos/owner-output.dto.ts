@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Transform } from 'class-transformer';
 import { IsNotEmpty, IsString, Length } from 'class-validator';
 
 export class OwnerOutput {
@@ -41,9 +41,23 @@ export class OwnerOutput {
 
   @Expose()
   @ApiProperty()
+  @Transform(
+    ({ value }) =>
+      value
+        ? new Date(value).toISOString().replace('T', ' ').substring(0, 19)
+        : value,
+    { toPlainOnly: true },
+  )
   createdAt: string;
 
   @Expose()
   @ApiProperty()
+  @Transform(
+    ({ value }) =>
+      value
+        ? new Date(value).toISOString().replace('T', ' ').substring(0, 19)
+        : value,
+    { toPlainOnly: true },
+  )
   updatedAt: string;
 }

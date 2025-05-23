@@ -25,11 +25,11 @@ export class LoggingInterceptor implements NestInterceptor {
     return next.handle().pipe(
       tap(() => {
         const response = context.switchToHttp().getResponse();
-        const statusCode = response.statusCode;
+        const code = response.statusCode;
 
         const responseTime = Date.now() - now;
 
-        const resData = { method, statusCode, responseTime };
+        const resData = { method, code, responseTime };
 
         this.appLogger.log(ctx, 'Request completed', { resData });
       }),

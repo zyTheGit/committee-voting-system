@@ -13,6 +13,7 @@ const routes: Array<RouteRecordRaw> = [
       title: '异常页面',
       icon: renderIcon(ExclamationCircleOutlined),
       sort: 3,
+      hidden: true,
     },
     children: [
       {

@@ -1,12 +1,12 @@
 import { Injectable, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import * as ExcelJS from 'exceljs';
 import { Owner } from '../entities/owner.entity';
-import { OwnerExcelDto } from '../dtos/owner-excel.dto';
+import { OwnerInput } from '../dtos/owner-input.dto';
 import { plainToClass } from 'class-transformer';
 import { OwnerOutput } from '../dtos/owner-output.dto';
-import { OwnerInput } from '../dtos/owner-update-input.dto';
+import { OwnerUpdateInput } from '../dtos/owner-update-input.dto';
 import { FileService } from 'src/file/services/file.service';
 import { FileOutput } from 'src/file/dtos/file-output.dto';
 
@@ -24,9 +24,9 @@ export class OwnerService {
       file,
       '业主信息导入Excel文件',
       undefined,
-      'owner-excel'
+      'owner-excel',
     );
-    
+
     // 使用文件的buffer或从路径读取
     const fileBuffer = file instanceof Buffer ? file : file.buffer;
     const workbook = new ExcelJS.Workbook();
@@ -66,28 +66,31 @@ export class OwnerService {
     idNumber?: string;
     limit?: number;
     offset?: number;
-  }): Promise<{ records: Owner[]; count: number }> {
+  }): Promise<{ records: OwnerOutput[]; count: number }> {
     const where = [];
-    if (query.name) where.push({ name: query.name });
-    if (query.phone) where.push({ phone: query.phone });
-    if (query.idNumber) where.push({ idNumber: query.idNumber });
+    if (query.name) where.push({ name: Like(`%${query.name}%`) });
+    if (query.phone) where.push({ phone: Like(`%${query.phone}%`) });
+    if (query.idNumber) where.push({ idNumber: Like(`%${query.idNumber}%`) });
     const [owners, count] = await this.ownerRepository.findAndCount({
       where: where.length > 0 ? where : undefined,
       take: query.limit ?? 100,
       skip: query.offset ?? 0,
     });
-    const ownersOutput = plainToClass(Owner, owners, {
+    const ownersOutput = plainToClass(OwnerOutput, owners, {
       excludeExtraneousValues: true,
     });
 
     return { records: ownersOutput, count };
   }
 
-  async create(owner: Owner): Promise<Owner> {
+  async create(owner: OwnerInput): Promise<Owner> {
     return this.ownerRepository.save(owner);
   }
 
-  async update(id: number, input: Partial<OwnerInput>): Promise<OwnerOutput> {
+  async update(
+    id: number,
+    input: Partial<OwnerUpdateInput>,
+  ): Promise<OwnerOutput> {
     // 检查是否存在
     const owner = await this.ownerRepository.findOneBy({ id });
     if (!owner) {
@@ -97,7 +100,7 @@ export class OwnerService {
       ...owner,
       ...input,
       remark:
-        typeof input.remark === 'string' ? input.remark : owner.remark ?? '',
+        typeof input.remark === 'string' ? input.remark : (owner.remark ?? ''),
     };
 
     await this.ownerRepository.save(updateOwner);
@@ -131,31 +134,32 @@ export class OwnerService {
     });
 
     // 生成Excel文件的buffer
-    const buffer = await workbook.xlsx.writeBuffer() as Buffer;
-    
+    const buffer = (await workbook.xlsx.writeBuffer()) as Buffer;
+
     // 创建临时文件路径和名称
     const filename = `业主信息导出_${new Date().getTime()}.xlsx`;
     const tempFilePath = `${this.fileService.getUploadDir()}/${filename}`;
-    
+
     // 将buffer写入临时文件
     const fs = require('fs');
     fs.writeFileSync(tempFilePath, buffer);
-    
+
     // 创建文件记录
     const fileInfo = await this.fileService.uploadFile(
       {
         filename,
         originalname: filename,
-        mimetype: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        mimetype:
+          'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
         size: buffer.length,
         path: tempFilePath,
-        buffer
+        buffer,
       } as Express.Multer.File,
       '业主信息导出Excel文件',
       undefined,
-      'owner-excel'
+      'owner-excel',
     );
-    
+
     return { buffer, fileInfo };
   }
 }

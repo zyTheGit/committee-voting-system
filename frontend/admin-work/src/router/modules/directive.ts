@@ -13,6 +13,7 @@ const routes: Array<RouteRecordRaw> = [
       isRoot: true,
       activeMenu: 'directive_index',
       icon: renderIcon(BorderOuterOutlined),
+      hidden: true,
     },
     children: [
       {

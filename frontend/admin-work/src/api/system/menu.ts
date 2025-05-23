@@ -10,9 +10,7 @@ export interface ListDate {
   children?: ListDate[];
 }
 
-const menusList = [
- 
-];
+const menusList = [];
 
 /**
  * @description: 根据用户id获取用户菜单

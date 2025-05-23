@@ -23,14 +23,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { OwnerService } from '../services/owner.service';
 import { Owner } from '../entities/owner.entity';
-import { OwnerInput } from '../dtos/owner-update-input.dto';
+import { OwnerInput } from '../dtos/owner-input.dto';
+import { OwnerUpdateInput } from '../dtos/owner-update-input.dto';
 import { OwnerOutput } from '../dtos/owner-output.dto';
 import { PaginationParamsDto } from '../../shared/dtos/pagination-params.dto';
+import { BaseApiResponse } from '../../shared/dtos/base-api-response.dto';
 import {
   PaginationUtil,
   PaginatedResponse,
 } from '../../shared/utils/pagination.util';
-import { BaseApiResponse } from 'src/shared/dtos/base-api-response.dto';
 import { plainToClass } from 'class-transformer';
 
 @ApiTags('业主')
@@ -39,30 +40,35 @@ export class OwnerController {
   constructor(private readonly ownerService: OwnerService) {}
 
   @ApiOperation({ summary: '新增业主', description: '创建新的业主信息' })
-  @ApiResponse({ status: 201, description: '创建成功' })
-  @ApiResponse({ status: 400, description: '参数错误' })
   @Post()
-  async create(@Body() owner: Owner): Promise<Owner> {
-    return this.ownerService.create(owner);
+  async create(@Body() owner: OwnerInput): Promise<BaseApiResponse<Owner>> {
+    const createOwner = await this.ownerService.create(owner);
+    return { result: createOwner, code: HttpStatus.OK, message: 'success' };
   }
 
   @ApiOperation({ summary: '更新业主信息', description: '根据ID更新业主信息' })
-  @ApiResponse({ status: 200, description: '更新成功' })
-  @ApiResponse({ status: 404, description: '业主不存在' })
   @Patch(':id')
   async update(
     @Param('id') id: number,
-    @Body() updateOwnerDto: Partial<OwnerInput>,
-  ): Promise<OwnerOutput> {
-    return this.ownerService.update(id, updateOwnerDto);
+    @Body() input: OwnerUpdateInput,
+  ): Promise<BaseApiResponse<OwnerOutput>> {
+    const result = await this.ownerService.update(id, input);
+    return {
+      result,
+      code: HttpStatus.OK,
+      message: 'success',
+    };
   }
 
   @ApiOperation({ summary: '删除业主', description: '根据ID删除业主信息' })
-  @ApiResponse({ status: 200, description: '删除成功' })
-  @ApiResponse({ status: 404, description: '业主不存在' })
   @Delete(':id')
-  async remove(@Param('id') id: number): Promise<void> {
-    return this.ownerService.remove(id);
+  async remove(@Param('id') id: number): Promise<BaseApiResponse<null>> {
+    await this.ownerService.remove(id);
+    return {
+      result: null,
+      code: HttpStatus.OK,
+      message: 'success',
+    };
   }
 
   @ApiOperation({
@@ -81,8 +87,6 @@ export class OwnerController {
       },
     },
   })
-  @ApiResponse({ status: 200, description: '导入成功' })
-  @ApiResponse({ status: 400, description: '文件格式错误' })
   @Post('import')
   @UseInterceptors(FileInterceptor('file'))
   async import(@UploadedFile() file: Express.Multer.File) {
@@ -102,7 +106,7 @@ export class OwnerController {
       phone?: string;
       idNumber?: string;
     } & PaginationParamsDto,
-  ): Promise<PaginatedResponse<Owner>> {
+  ): Promise<PaginatedResponse<OwnerOutput>> {
     // 处理分页参数
     const { limit, offset } = PaginationUtil.getPaginationParams(query);
 

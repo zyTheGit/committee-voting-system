@@ -4,13 +4,13 @@ export default {
       // 当前页的字段名
       pageField: 'page',
       // 每页数量字段名
-      sizeField: 'pageSize',
+      sizeField: 'limit',
       // 接口返回的数据字段名
-      listField: 'list',
+      listField: 'records',
       // 接口返回总页数字段名
-      totalField: 'pageCount',
+      totalField: 'total',
       //总数字段名
-      countField: 'itemCount',
+      countField: 'total',
     },
     //默认分页数量
     defaultPageSize: 10,

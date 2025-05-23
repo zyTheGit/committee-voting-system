@@ -34,7 +34,7 @@ export class AllExceptionsFilter<T> implements ExceptionFilter {
     const requestContext = createRequestContext(req);
 
     let stack: any;
-    let statusCode: HttpStatus | undefined = undefined;
+    let code: HttpStatus | undefined = undefined;
     let errorName: string | undefined = undefined;
     let message: string | undefined = undefined;
     let details: string | Record<string, any> | undefined = undefined;
@@ -44,7 +44,7 @@ export class AllExceptionsFilter<T> implements ExceptionFilter {
 
     // TODO : Refactor the below cases into a switch case and tidy up error response creation.
     if (exception instanceof BaseApiException) {
-      statusCode = exception.getStatus();
+      code = exception.getStatus();
       errorName = exception.constructor.name;
       message = exception.message;
       localizedMessage = exception.localizedMessage
@@ -52,7 +52,7 @@ export class AllExceptionsFilter<T> implements ExceptionFilter {
         : undefined;
       details = exception.details || exception.getResponse();
     } else if (exception instanceof HttpException) {
-      statusCode = exception.getStatus();
+      code = exception.getStatus();
       errorName = exception.constructor.name;
       message = exception.message;
       details = exception.getResponse();
@@ -63,13 +63,13 @@ export class AllExceptionsFilter<T> implements ExceptionFilter {
     }
 
     // Set to internal server error in case it did not match above categories.
-    statusCode = statusCode || HttpStatus.INTERNAL_SERVER_ERROR;
+    code = code || HttpStatus.INTERNAL_SERVER_ERROR;
     errorName = errorName || 'InternalException';
     message = message || 'Internal server error';
 
     // NOTE: For reference, please check https://cloud.google.com/apis/design/errors
     const error = {
-      statusCode,
+      code,
       message,
       localizedMessage,
       errorName,
@@ -86,10 +86,10 @@ export class AllExceptionsFilter<T> implements ExceptionFilter {
 
     // Suppress original internal server error details in prod mode
     const isProMood = this.config.get<string>('env') !== 'development';
-    if (isProMood && statusCode === HttpStatus.INTERNAL_SERVER_ERROR) {
+    if (isProMood && code === HttpStatus.INTERNAL_SERVER_ERROR) {
       error.message = 'Internal server error';
     }
 
-    res.status(statusCode).json(error);
+    res.status(code).json(error);
   }
 }
